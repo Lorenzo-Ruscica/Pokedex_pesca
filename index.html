@@ -26,9 +26,10 @@
           <div class="led led-small led-yellow"></div>
           <div class="led led-small led-green"></div>
         </div>
-        <button id="btn-settings" class="btn-header-settings" aria-label="Impostazioni" title="Impostazioni">
-          ⚙️
-        </button>
+        <div class="header-actions">
+          <button id="btn-sound" class="btn-header-sound" aria-label="Audio" title="Audio">🔊</button>
+          <button id="btn-settings" class="btn-header-settings" aria-label="Impostazioni" title="Impostazioni">⚙️</button>
+        </div>
       </div>
       <div class="header-title">
         <h1>FISH<span class="pokedex-accent-e" aria-label="E">E</span>DEX</h1>
@@ -40,13 +41,27 @@
 
     <!-- ═══════════ COLLECTION SCREEN ═══════════ -->
     <main id="screen-collection" class="screen active">
-      <!-- Empty state -->
+      <!-- Empty state with pixel fishing scene -->
       <div id="empty-state" class="empty-state">
-        <div class="empty-fish-icon">
-          <div class="pixel-fish-art"></div>
+        <div class="empty-fishing-scene">
+          <div class="pixel-water-surface">
+            <div class="pixel-floating-bobber">
+              <div class="bobber-stem"></div>
+              <div class="bobber-body">
+                <span class="b-red"></span>
+                <span class="b-white"></span>
+              </div>
+            </div>
+            <div class="pixel-ripple-ring r1"></div>
+            <div class="pixel-ripple-ring r2"></div>
+            <div class="pixel-underwater-bubble b1"></div>
+            <div class="pixel-underwater-bubble b2"></div>
+            <div class="pixel-underwater-bubble b3"></div>
+            <div class="pixel-swimming-fish">🐟</div>
+          </div>
         </div>
         <p class="empty-title">NESSUN PESCE<br>CATTURATO!</p>
-        <p class="empty-sub">Tocca <span class="highlight">+</span> per iniziare<br>la tua collezione</p>
+        <p class="empty-sub">Lancia l'amo! Tocca <span class="highlight">+</span> per registrare<br>il tuo primo pesce</p>
       </div>
       <!-- Fish grid -->
       <div id="fish-grid" class="fish-grid"></div>
@@ -229,6 +244,66 @@
         </div>
 
         <button id="settings-save-btn" class="btn-save-settings">SALVA PREFERENZE</button>
+      </div>
+    </div>
+
+    <!-- ═══════════ CATCH & SCAN ANIMATION OVERLAY ═══════════ -->
+    <div id="catch-animation-overlay" class="catch-overlay" style="display: none;">
+      <div class="catch-backdrop"></div>
+      <div class="catch-card">
+        <!-- Top header bar with scanning LEDs -->
+        <div class="catch-header">
+          <div class="catch-leds">
+            <span class="catch-led c-led-blue"></span>
+            <span class="catch-led c-led-red"></span>
+            <span class="catch-led c-led-yellow"></span>
+            <span class="catch-led c-led-green"></span>
+          </div>
+          <span class="catch-badge">FISHÉDEX SCANNER</span>
+        </div>
+
+        <!-- Stage 1: The Fishing Bite & Reel -->
+        <div id="catch-stage-fishing" class="catch-stage">
+          <div class="pixel-water-box">
+            <div class="pixel-exclamation">!</div>
+            <div class="pixel-fishing-line"></div>
+            <div class="pixel-bobber-catch">
+              <div class="bobber-stem"></div>
+              <div class="bobber-body">
+                <span class="b-red"></span>
+                <span class="b-white"></span>
+              </div>
+            </div>
+            <div class="pixel-ripples">
+              <span class="ripple r1"></span>
+              <span class="ripple r2"></span>
+            </div>
+            <div class="pixel-water-surface-line"></div>
+          </div>
+          <p id="catch-status-text" class="catch-status-text">QUALCOSA HA ABBOCCATO!</p>
+          <div class="catch-dots"><span class="dot d1">.</span><span class="dot d2">.</span><span class="dot d3">.</span></div>
+        </div>
+
+        <!-- Stage 2: Caught & Pokédex Registration -->
+        <div id="catch-stage-registered" class="catch-stage" style="display: none;">
+          <div class="caught-photo-frame">
+            <img id="catch-photo-img" class="catch-photo-img" src="" alt="Pesce catturato">
+            <div class="catch-laser-beam"></div>
+            <div class="catch-grid-overlay"></div>
+            <div class="pixel-sparkle s1">✦</div>
+            <div class="pixel-sparkle s2">✦</div>
+            <div class="pixel-sparkle s3">✦</div>
+            <div class="pixel-sparkle s4">✦</div>
+          </div>
+          <div class="catch-registered-info">
+            <div class="catch-num-tag" id="catch-num-tag">#001</div>
+            <div class="catch-name-tag" id="catch-name-tag">ORATA</div>
+            <div class="catch-loc-tag" id="catch-loc-tag">MARE</div>
+          </div>
+          <div class="catch-stamp">★ CATTURATO! ★</div>
+          <button id="btn-catch-continue" class="btn-catch-continue">REGISTRA NELLA COLLEZIONE ➔</button>
+        </div>
+
       </div>
     </div>
 

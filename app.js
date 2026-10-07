@@ -44,8 +44,21 @@
   const elBtnSave = $('#btn-save');
   const elAutocompleteList = $('#autocomplete-list');
 
-  // Header settings button
+  // Header buttons
+  const elHeader = $('#main-header');
   const elBtnSettings = $('#btn-settings');
+  const elBtnSound = $('#btn-sound');
+
+  // Catch Animation Overlay
+  const elCatchOverlay = $('#catch-animation-overlay');
+  const elCatchStageFishing = $('#catch-stage-fishing');
+  const elCatchStageRegistered = $('#catch-stage-registered');
+  const elCatchStatusText = $('#catch-status-text');
+  const elCatchPhotoImg = $('#catch-photo-img');
+  const elCatchNumTag = $('#catch-num-tag');
+  const elCatchNameTag = $('#catch-name-tag');
+  const elCatchLocTag = $('#catch-loc-tag');
+  const elBtnCatchContinue = $('#btn-catch-continue');
 
   // Photo picker
   const elPhotoPicker = $('#photo-picker');
@@ -117,6 +130,162 @@
     } catch (e) {
       console.warn('Error saving settings:', e);
     }
+  }
+
+  // ─── 8-Bit Web Audio Synthesizer (SFX) ─────
+  let soundEnabled = localStorage.getItem('fishedex_sound') !== 'false';
+  let audioCtx = null;
+
+  function initAudio() {
+    if (!audioCtx) {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (AudioContextClass) audioCtx = new AudioContextClass();
+    }
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+  }
+
+  const SFX = {
+    // Menu click / navigation beep
+    beep() {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.08);
+      } catch (e) {}
+    },
+
+    // Fishing bite exclamation ("!")
+    bite() {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      try {
+        const t = audioCtx.currentTime;
+        [0, 0.1].forEach((delay) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(880, t + delay);
+          gain.gain.setValueAtTime(0.12, t + delay);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + delay + 0.07);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(t + delay);
+          osc.stop(t + delay + 0.07);
+        });
+      } catch (e) {}
+    },
+
+    // Water splash sound
+    splash() {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      try {
+        const t = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(320, t);
+        osc.frequency.exponentialRampToValueAtTime(70, t + 0.22);
+        gain.gain.setValueAtTime(0.18, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + 0.22);
+      } catch (e) {}
+    },
+
+    // Pokédex computer scan chirp
+    scan() {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      try {
+        const t = audioCtx.currentTime;
+        for (let i = 0; i < 4; i++) {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(500 + i * 180, t + i * 0.06);
+          gain.gain.setValueAtTime(0.06, t + i * 0.06);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.06 + 0.04);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(t + i * 0.06);
+          osc.stop(t + i * 0.06 + 0.04);
+        }
+      } catch (e) {}
+    },
+
+    // Retro Victory Catch Fanfare (C5 -> E5 -> G5 -> C6)
+    catchVictory() {
+      if (!soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      try {
+        const t = audioCtx.currentTime;
+        const notes = [
+          { f: 523.25, d: 0.1, delay: 0 },
+          { f: 659.25, d: 0.1, delay: 0.11 },
+          { f: 783.99, d: 0.1, delay: 0.22 },
+          { f: 1046.50, d: 0.4, delay: 0.33 }
+        ];
+        notes.forEach((n) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(n.f, t + n.delay);
+          gain.gain.setValueAtTime(0.14, t + n.delay);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + n.delay + n.d);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(t + n.delay);
+          osc.stop(t + n.delay + n.d);
+        });
+      } catch (e) {}
+    }
+  };
+
+  function toggleSound() {
+    soundEnabled = !soundEnabled;
+    localStorage.setItem('fishedex_sound', soundEnabled ? 'true' : 'false');
+    updateSoundButton();
+    if (soundEnabled) {
+      SFX.beep();
+      showToast('🔊 Audio attivato');
+    } else {
+      showToast('🔇 Audio disattivato');
+    }
+  }
+
+  function updateSoundButton() {
+    if (elBtnSound) {
+      elBtnSound.textContent = soundEnabled ? '🔊' : '🔇';
+    }
+  }
+
+  // ─── Header LED Scanner Animation ─────────
+  let ledScanTimer = null;
+  function startLedScan(duration = 1800) {
+    if (elHeader) elHeader.classList.add('leds-scanning');
+    if (ledScanTimer) clearTimeout(ledScanTimer);
+    ledScanTimer = setTimeout(() => {
+      if (elHeader) elHeader.classList.remove('leds-scanning');
+    }, duration);
   }
 
   // ─── IndexedDB ───────────────────────────
@@ -380,6 +549,7 @@
     // Attach click handlers to cards
     elFishGrid.querySelectorAll('.fish-card').forEach((card) => {
       card.addEventListener('click', () => {
+        SFX.beep();
         const id = Number(card.dataset.id);
         openDetail(id);
       });
@@ -440,6 +610,7 @@
     elDetailBody.innerHTML = `
       <div class="detail-photo-wrapper">
         <img class="detail-photo" src="${fish.photo}" alt="${escapeHTML(fish.name)}">
+        <div class="scanner-laser"></div>
         <span class="detail-number-badge">#${num}</span>
       </div>
       <div class="detail-info">
@@ -460,6 +631,8 @@
     `;
 
     showScreen(screenDetail);
+    SFX.scan();
+    startLedScan(1800);
   }
 
   // ─── Open Add Screen ────────────────────
@@ -515,9 +688,10 @@
     });
 
     showScreen(screenAdd);
+    SFX.beep();
   }
 
-  // ─── Save Fish ───────────────────────────
+  // ─── Save Fish & Catch Sequence ──────────
 
   async function saveFish() {
     const name = elInputName.value.trim();
@@ -540,14 +714,83 @@
     };
 
     try {
-      await addFish(fishData);
-      showToast('🐟 Pesce aggiunto alla Fishédex!');
+      const id = await addFish(fishData);
+      fishData.id = id;
+
+      // Launch the Epic Catch Sequence!
+      await playCatchSequence(fishData);
+
       showScreen(screenCollection);
       await renderCollection();
     } catch (err) {
       console.error('Save error:', err);
       showToast('Errore nel salvataggio!');
     }
+  }
+
+  // ─── Epic Catch & Pokédex Registration Sequence ───
+
+  function playCatchSequence(fishData) {
+    return new Promise(async (resolve) => {
+      if (!elCatchOverlay) return resolve();
+
+      const all = await getAllFish();
+      const numStr = '#' + String(all.length).padStart(3, '0');
+
+      if (elCatchPhotoImg) elCatchPhotoImg.src = fishData.photo;
+      if (elCatchNumTag) elCatchNumTag.textContent = numStr;
+      if (elCatchNameTag) elCatchNameTag.textContent = fishData.name;
+      if (elCatchLocTag) {
+        elCatchLocTag.textContent = fishData.location?.name ? `📍 ${fishData.location.name}` : '📍 MARE';
+      }
+
+      // Reset stages
+      if (elCatchStageFishing) elCatchStageFishing.style.display = 'flex';
+      if (elCatchStageRegistered) elCatchStageRegistered.style.display = 'none';
+      if (elCatchStatusText) elCatchStatusText.textContent = 'QUALCOSA HA ABBOCCATO!';
+
+      elCatchOverlay.style.display = 'flex';
+
+      // 1. Stage 1: The bite exclamation & sound
+      SFX.bite();
+
+      // 2. Stage 1.2: Bobber dives with splash
+      const t1 = setTimeout(() => {
+        SFX.splash();
+        if (elCatchStatusText) elCatchStatusText.textContent = 'TIRO IN CORSO... PRESO!';
+      }, 700);
+
+      // 3. Stage 2: Caught & Pokédex registration!
+      const t2 = setTimeout(() => {
+        if (elCatchStageFishing) elCatchStageFishing.style.display = 'none';
+        if (elCatchStageRegistered) elCatchStageRegistered.style.display = 'flex';
+
+        // Laser scan sound & LED sequence
+        SFX.scan();
+        startLedScan(2200);
+
+        // Victory fanfare!
+        setTimeout(() => {
+          SFX.catchVictory();
+        }, 350);
+      }, 1500);
+
+      const finish = () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+        elCatchOverlay.style.display = 'none';
+        resolve();
+      };
+
+      if (elBtnCatchContinue) {
+        elBtnCatchContinue.onclick = finish;
+      }
+      elCatchOverlay.onclick = (e) => {
+        if (e.target === elCatchOverlay || e.target.classList.contains('catch-backdrop')) {
+          finish();
+        }
+      };
+    });
   }
 
   // ─── Delete Fish ─────────────────────────
@@ -898,6 +1141,15 @@
     if (elSettingsClose) elSettingsClose.addEventListener('click', closeSettingsModal);
     if (elSettingsBackdrop) elSettingsBackdrop.addEventListener('click', closeSettingsModal);
     if (elSettingsSaveBtn) elSettingsSaveBtn.addEventListener('click', handleSaveSettings);
+
+    // Sound toggle button
+    if (elBtnSound) {
+      elBtnSound.addEventListener('click', (e) => {
+        e.preventDefault();
+        toggleSound();
+      });
+      updateSoundButton();
+    }
 
     // Photo choice modal (ask mode) events
     if (elChoiceApiPhoto) {
