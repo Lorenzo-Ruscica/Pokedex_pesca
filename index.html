@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#cc0000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="Il tuo Pokédex personale per collezionare pesci!">
+  <title>Fishédex</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- ═══════════ HEADER ═══════════ -->
+    <header id="main-header">
+      <div class="header-top-row">
+        <div class="header-leds">
+          <div class="led led-big"></div>
+          <div class="led led-small led-red"></div>
+          <div class="led led-small led-yellow"></div>
+          <div class="led led-small led-green"></div>
+        </div>
+        <button id="btn-settings" class="btn-header-settings" aria-label="Impostazioni" title="Impostazioni">
+          ⚙️
+        </button>
+      </div>
+      <div class="header-title">
+        <h1>FISH<span class="pokedex-accent-e" aria-label="E">E</span>DEX</h1>
+        <div class="fish-counter">
+          <span id="fish-count">000</span> PESCI
+        </div>
+      </div>
+    </header>
+
+    <!-- ═══════════ COLLECTION SCREEN ═══════════ -->
+    <main id="screen-collection" class="screen active">
+      <!-- Empty state -->
+      <div id="empty-state" class="empty-state">
+        <div class="empty-fish-icon">
+          <div class="pixel-fish-art"></div>
+        </div>
+        <p class="empty-title">NESSUN PESCE<br>CATTURATO!</p>
+        <p class="empty-sub">Tocca <span class="highlight">+</span> per iniziare<br>la tua collezione</p>
+      </div>
+      <!-- Fish grid -->
+      <div id="fish-grid" class="fish-grid"></div>
+    </main>
+
+    <!-- ═══════════ ADD/EDIT SCREEN ═══════════ -->
+    <section id="screen-add" class="screen">
+      <div class="screen-topbar">
+        <button class="btn-back" data-action="back-to-collection">◀ INDIETRO</button>
+        <span class="topbar-title">NUOVO PESCE</span>
+      </div>
+
+      <div class="add-form-wrapper">
+        <!-- Photo area -->
+        <div class="photo-capture" id="photo-capture">
+          <div class="photo-placeholder" id="photo-placeholder">
+            <div class="camera-icon">📷</div>
+            <span>TOCCA PER FOTO</span>
+          </div>
+          <img id="photo-preview" class="photo-preview" alt="Anteprima foto">
+          <input type="file" id="camera-input" accept="image/*" capture="environment" hidden>
+          <input type="file" id="gallery-input" accept="image/*" hidden>
+          <button id="remove-photo-btn" class="btn-remove-photo" hidden>✕</button>
+        </div>
+
+        <!-- Form fields -->
+        <div class="form-fields">
+          <div class="field-group field-autocomplete">
+            <label class="field-label">NOME <span class="required">*</span></label>
+            <input type="text" id="input-name" class="pixel-input" placeholder="Es: Orata, Spigola..." autocomplete="off">
+            <div id="autocomplete-list" class="autocomplete-list" hidden></div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">DESCRIZIONE</label>
+            <textarea id="input-desc" class="pixel-input" rows="3" placeholder="Note opzionali..."></textarea>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">📍 POSIZIONE</label>
+            <div id="location-display" class="location-box">
+              <div class="location-loading">
+                <span class="dot-pulse"></span>
+                Rilevamento posizione...
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">📅 DATA</label>
+            <div id="date-display" class="date-box"></div>
+          </div>
+        </div>
+
+        <button id="btn-save" class="btn-save" disabled>
+          SALVA NELLA FISH<span class="pokedex-accent-e">E</span>DEX
+        </button>
+      </div>
+    </section>
+
+    <!-- ═══════════ DETAIL SCREEN ═══════════ -->
+    <section id="screen-detail" class="screen">
+      <div class="screen-topbar">
+        <button class="btn-back" data-action="back-to-collection">◀ INDIETRO</button>
+        <button id="btn-delete" class="btn-delete">🗑️ ELIMINA</button>
+      </div>
+      <div id="detail-body" class="detail-body">
+        <!-- Filled dynamically -->
+      </div>
+    </section>
+
+    <!-- ═══════════ FAB ═══════════ -->
+    <button id="fab" class="fab" aria-label="Aggiungi pesce">
+      <span>+</span>
+    </button>
+
+    <!-- ═══════════ TOAST ═══════════ -->
+    <div id="toast" class="toast"></div>
+
+    <!-- ═══════════ CONFIRM DIALOG ═══════════ -->
+    <div id="confirm-overlay" class="confirm-overlay" style="display: none;">
+      <div class="confirm-box">
+        <p id="confirm-message" class="confirm-msg"></p>
+        <div class="confirm-actions">
+          <button id="confirm-cancel" class="btn-confirm cancel">ANNULLA</button>
+          <button id="confirm-ok" class="btn-confirm ok">CONFERMA</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ INSTALL BANNER ═══════════ -->
+    <div id="install-banner" class="install-banner" style="display: none;">
+      <p>📲 Installa Fishédex!</p>
+      <div class="install-actions">
+        <button id="install-dismiss" class="btn-install-dismiss">DOPO</button>
+        <button id="install-accept" class="btn-install-accept">INSTALLA</button>
+      </div>
+    </div>
+
+    <!-- ═══════════ PHOTO SOURCE PICKER ═══════════ -->
+    <div id="photo-picker" class="photo-picker" style="display: none;">
+      <div class="photo-picker-backdrop" id="picker-backdrop"></div>
+      <div class="photo-picker-sheet">
+        <p class="photo-picker-title">SCEGLI SORGENTE</p>
+        <button class="photo-picker-btn" id="pick-camera">📷  FOTOCAMERA</button>
+        <button class="photo-picker-btn" id="pick-gallery">🖼️  GALLERIA</button>
+        <button class="photo-picker-btn" id="pick-api" style="display: none;">🌐  FOTO DAL DATABASE</button>
+        <button class="photo-picker-btn cancel" id="pick-cancel">ANNULLA</button>
+      </div>
+    </div>
+
+    <!-- ═══════════ PHOTO CHOICE MODAL (quando impostazione = 'ask') ═══════════ -->
+    <div id="photo-choice-modal" class="confirm-overlay" style="display: none;">
+      <div class="confirm-box">
+        <p class="confirm-msg" id="choice-msg">TROVATA FOTO NEL DATABASE!<br><br>Quale foto vuoi usare?</p>
+        <div class="confirm-actions-col">
+          <button id="choice-api-photo" class="btn-confirm ok">🌐 USA FOTO DATABASE</button>
+          <button id="choice-my-photo" class="btn-confirm cancel">📸 METTO LA MIA FOTO</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════ SETTINGS MODAL ═══════════ -->
+    <div id="settings-modal" class="settings-modal" style="display: none;">
+      <div class="settings-backdrop" id="settings-backdrop"></div>
+      <div class="settings-box">
+        <div class="settings-header">
+          <span class="settings-title">⚙️ IMPOSTAZIONI</span>
+          <button id="settings-close" class="btn-settings-close">✕</button>
+        </div>
+
+        <div class="settings-body">
+          <div class="settings-section">
+            <label class="settings-section-title">ORIGINE FOTO PESCE</label>
+            <p class="settings-section-desc">Quando selezioni un pesce dal database:</p>
+
+            <div class="settings-options">
+              <label class="pixel-radio-label">
+                <input type="radio" name="setting-photo-mode" value="manual" class="pixel-radio" checked>
+                <span class="pixel-radio-custom"></span>
+                <span class="pixel-radio-text">
+                  <strong>📸 MIA FOTO (MANUALE)</strong>
+                  <small>Fotocamera o galleria personale</small>
+                </span>
+              </label>
+
+              <label class="pixel-radio-label">
+                <input type="radio" name="setting-photo-mode" value="auto" class="pixel-radio">
+                <span class="pixel-radio-custom"></span>
+                <span class="pixel-radio-text">
+                  <strong>🌐 AUTOMATICA (API)</strong>
+                  <small>Imposta la foto ufficiale dal database</small>
+                </span>
+              </label>
+
+              <label class="pixel-radio-label">
+                <input type="radio" name="setting-photo-mode" value="ask" class="pixel-radio">
+                <span class="pixel-radio-custom"></span>
+                <span class="pixel-radio-text">
+                  <strong>❓ CHIEDI OGNI VOLTA</strong>
+                  <small>Chiede quale foto vuoi usare</small>
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <label class="settings-section-title">INFO SISTEMA</label>
+            <div class="settings-info-box">
+              <div class="settings-info-row">
+                <span>DATABASE</span>
+                <span>iNaturalist API</span>
+              </div>
+              <div class="settings-info-row">
+                <span>VERSIONE</span>
+                <span>FISH<span class="pokedex-accent-e">E</span>DEX v1.2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button id="settings-save-btn" class="btn-save-settings">SALVA PREFERENZE</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

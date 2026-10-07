@@ -1,0 +1,1390 @@
+/* ══════════════════════════════════════════════
+   FISHÉDEX — Pixel Art Pokédex per Pesci
+   Mobile-only PWA Stylesheet
+   ══════════════════════════════════════════════ */
+
+/* ── Google Font ── */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* ── Custom Properties ── */
+:root {
+  --bg-deep:      #0a0e1a;
+  --bg-primary:   #0f1923;
+  --bg-card:      #152238;
+  --bg-card-hover:#1a2d4a;
+  --bg-input:     #0d1520;
+
+  --red:          #cc0000;
+  --red-dark:     #8b0000;
+  --red-light:    #ff3333;
+
+  --blue:         #3b82f6;
+  --blue-dark:    #1e3a8a;
+  --cyan:         #22d3ee;
+  --yellow:       #fbbf24;
+  --green:        #4ade80;
+  --green-dark:   #16a34a;
+
+  --text:         #e2e8f0;
+  --text-dim:     #8899aa;
+  --text-muted:   #556677;
+
+  --border:       #1e3050;
+  --border-light: #2a4060;
+  --pixel-shadow: #000000;
+
+  --danger:       #ef4444;
+  --danger-dark:  #b91c1c;
+
+  --header-h:     100px;
+  --topbar-h:     52px;
+  --fab-size:     64px;
+
+  --safe-bottom:  env(safe-area-inset-bottom, 0px);
+}
+
+/* ── Reset ── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Ensure hidden elements are never displayed and cannot intercept clicks */
+[hidden], [style*="display: none"], [style*="display:none"] {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+button, .fab, .btn-header-settings, .btn-back, .btn-save, .btn-confirm, .photo-picker-btn {
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+html, body {
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  line-height: 1.6;
+  background-color: var(--bg-deep);
+  color: var(--text);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input, textarea {
+  font-family: 'Press Start 2P', monospace;
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+
+/* ── App Container ── */
+#app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg-primary);
+}
+
+/* ══════════════════════════════════════
+   HEADER — Pokédex Top
+   ══════════════════════════════════════ */
+
+#main-header {
+  flex-shrink: 0;
+  height: var(--header-h);
+  background: var(--red);
+  background: linear-gradient(180deg, var(--red) 0%, var(--red-dark) 100%);
+  padding: 12px 16px;
+  position: relative;
+  z-index: 100;
+  /* Pixel art bottom border */
+  border-bottom: 4px solid #600;
+  box-shadow:
+    0 4px 0 0 #400,
+    0 8px 20px rgba(0,0,0,0.5);
+}
+
+.header-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.header-leds {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-header-settings {
+  position: relative;
+  z-index: 200;
+  background: var(--red-dark);
+  border: 2px solid #550000;
+  color: #fff;
+  font-size: 14px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+  transition: transform 0.1s, background-color 0.15s;
+}
+
+.btn-header-settings:active {
+  transform: scale(0.92);
+  background: #500;
+}
+
+.led {
+  border-radius: 50%;
+  border: 2px solid rgba(0,0,0,0.3);
+}
+
+.led-big {
+  width: 24px;
+  height: 24px;
+  background: var(--cyan);
+  box-shadow:
+    inset -2px -2px 0 rgba(0,0,0,0.2),
+    inset 2px 2px 0 rgba(255,255,255,0.3),
+    0 0 8px var(--cyan),
+    0 0 16px rgba(34, 211, 238, 0.3);
+  margin-right: 8px;
+}
+
+.led-small {
+  width: 10px;
+  height: 10px;
+}
+
+.led-red {
+  background: var(--red-light);
+  box-shadow: 0 0 4px var(--red-light);
+}
+
+.led-yellow {
+  background: var(--yellow);
+  box-shadow: 0 0 4px var(--yellow);
+}
+
+.led-green {
+  background: var(--green);
+  box-shadow: 0 0 4px var(--green);
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.header-title h1 {
+  font-size: 14px;
+  color: #fff;
+  text-shadow:
+    2px 2px 0 var(--red-dark),
+    -1px -1px 0 rgba(255,255,255,0.1);
+  letter-spacing: 1.5px;
+  white-space: nowrap;
+}
+
+/* Pokédex acute accent over uppercase E */
+.pokedex-accent-e {
+  position: relative;
+  display: inline-block;
+}
+
+.pokedex-accent-e::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  right: 1px;
+  width: 4px;
+  height: 2px;
+  background: #ffffff;
+  box-shadow: -2px 2px 0 0 #ffffff;
+  filter: drop-shadow(2px 2px 0 var(--red-dark));
+}
+
+.fish-counter {
+  font-size: 7px;
+  color: rgba(255,255,255,0.9);
+  background: var(--red-dark);
+  padding: 4px 6px;
+  border: 2px solid #600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════
+   SCREENS — Generic
+   ══════════════════════════════════════ */
+
+.screen {
+  position: absolute;
+  top: var(--header-h);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  transform: translateX(100%);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.2s ease;
+  z-index: 1;
+  background: var(--bg-primary);
+}
+
+.screen.active {
+  transform: translateX(0);
+  opacity: 1;
+  z-index: 10;
+}
+
+/* ── Scrollbar (thin, themed) ── */
+.screen::-webkit-scrollbar {
+  width: 4px;
+}
+
+.screen::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.screen::-webkit-scrollbar-thumb {
+  background: var(--border-light);
+  border-radius: 2px;
+}
+
+/* ══════════════════════════════════════
+   COLLECTION — Empty State
+   ══════════════════════════════════════ */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 32px;
+  text-align: center;
+  animation: fadeIn 0.6s ease;
+}
+
+.empty-fish-icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+/* Pixel art fish using CSS */
+.pixel-fish-art {
+  width: 80px;
+  height: 56px;
+  position: relative;
+  animation: fishSwim 3s ease-in-out infinite;
+}
+
+.pixel-fish-art::before {
+  content: '🐟';
+  font-size: 48px;
+  display: block;
+  filter: grayscale(0.3);
+  image-rendering: pixelated;
+}
+
+@keyframes fishSwim {
+  0%, 100% { transform: translateX(0) scaleX(1); }
+  25% { transform: translateX(8px) scaleX(1); }
+  50% { transform: translateX(0) scaleX(1); }
+  75% { transform: translateX(-8px) scaleX(-1); }
+}
+
+.empty-title {
+  font-size: 12px;
+  color: var(--text);
+  margin-bottom: 12px;
+  line-height: 2;
+}
+
+.empty-sub {
+  font-size: 8px;
+  color: var(--text-dim);
+  line-height: 2;
+}
+
+.empty-sub .highlight {
+  color: var(--cyan);
+  font-size: 12px;
+}
+
+/* ══════════════════════════════════════
+   COLLECTION — Fish Grid
+   ══════════════════════════════════════ */
+
+.fish-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 12px;
+  padding-bottom: calc(80px + var(--safe-bottom));
+}
+
+/* ── Fish Card ── */
+.fish-card {
+  background: var(--bg-card);
+  border: 3px solid var(--border);
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+  overflow: hidden;
+  /* Pixel art corners */
+  clip-path: polygon(
+    0 4px, 4px 4px, 4px 0,
+    calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px,
+    100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px),
+    calc(100% - 4px) 100%, 4px 100%, 4px calc(100% - 4px),
+    0 calc(100% - 4px)
+  );
+}
+
+.fish-card:active {
+  transform: scale(0.96);
+  border-color: var(--cyan);
+}
+
+.fish-card-img-wrapper {
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--bg-deep);
+  position: relative;
+}
+
+.fish-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: auto;
+  display: block;
+}
+
+.fish-card-number {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  background: rgba(0, 0, 0, 0.75);
+  color: var(--cyan);
+  font-size: 7px;
+  padding: 2px 5px;
+  border: 1px solid var(--cyan);
+  z-index: 2;
+}
+
+.fish-card-info {
+  padding: 8px;
+  min-height: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.fish-card-name {
+  font-size: 7px;
+  color: var(--text);
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+.fish-card-location {
+  font-size: 6px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fish-card-location::before {
+  content: '📍 ';
+}
+
+/* ══════════════════════════════════════
+   ADD SCREEN
+   ══════════════════════════════════════ */
+
+.screen-topbar {
+  position: sticky;
+  top: 0;
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  background: var(--bg-primary);
+  border-bottom: 3px solid var(--border);
+  z-index: 20;
+}
+
+.topbar-title {
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.btn-back {
+  background: none;
+  border: 2px solid var(--border-light);
+  color: var(--text);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.btn-back:active {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.add-form-wrapper {
+  padding: 16px;
+  padding-bottom: calc(32px + var(--safe-bottom));
+}
+
+/* ── Photo Capture ── */
+.photo-capture {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: var(--bg-deep);
+  border: 3px dashed var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.photo-capture:active {
+  border-color: var(--cyan);
+}
+
+.photo-capture.has-photo {
+  border-style: solid;
+  border-color: var(--green-dark);
+}
+
+.photo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-dim);
+  font-size: 9px;
+}
+
+.camera-icon {
+  font-size: 40px;
+  filter: grayscale(0.5);
+}
+
+.photo-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+  image-rendering: auto;
+}
+
+.photo-capture.has-photo .photo-placeholder {
+  display: none;
+}
+
+.photo-capture.has-photo .photo-preview {
+  display: block;
+}
+
+.btn-remove-photo {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  background: var(--danger);
+  border: 2px solid var(--danger-dark);
+  color: white;
+  font-size: 14px;
+  font-family: 'Press Start 2P', monospace;
+  cursor: pointer;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Form Fields ── */
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 8px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+.required {
+  color: var(--danger);
+}
+
+.pixel-input {
+  width: 100%;
+  background: var(--bg-input);
+  border: 3px solid var(--border);
+  color: var(--text);
+  font-size: 9px;
+  padding: 10px 12px;
+  outline: none;
+  transition: border-color 0.2s;
+  resize: none;
+}
+
+.pixel-input:focus {
+  border-color: var(--cyan);
+}
+
+.pixel-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* ── Location Box ── */
+.location-box {
+  background: var(--bg-input);
+  border: 3px solid var(--border);
+  padding: 10px 12px;
+  font-size: 8px;
+  color: var(--text-dim);
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.location-box.located {
+  border-color: var(--green-dark);
+  color: var(--green);
+}
+
+.location-box.error {
+  border-color: var(--danger-dark);
+  color: var(--danger);
+}
+
+.location-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot-pulse {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--cyan);
+  border-radius: 50%;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* ── Date Box ── */
+.date-box {
+  background: var(--bg-input);
+  border: 3px solid var(--border);
+  padding: 10px 12px;
+  font-size: 8px;
+  color: var(--text-dim);
+}
+
+/* ── Save Button ── */
+.btn-save {
+  width: 100%;
+  padding: 16px;
+  background: var(--green-dark);
+  border: 3px solid #0d6630;
+  color: #fff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: opacity 0.2s, transform 0.1s;
+  /* Pixel art corners */
+  clip-path: polygon(
+    0 4px, 4px 4px, 4px 0,
+    calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px,
+    100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px),
+    calc(100% - 4px) 100%, 4px 100%, 4px calc(100% - 4px),
+    0 calc(100% - 4px)
+  );
+}
+
+.btn-save:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-save:not(:disabled):active {
+  transform: scale(0.97);
+}
+
+/* ══════════════════════════════════════
+   DETAIL SCREEN
+   ══════════════════════════════════════ */
+
+.btn-delete {
+  background: none;
+  border: 2px solid var(--danger-dark);
+  color: var(--danger);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.btn-delete:active {
+  background: var(--danger-dark);
+  color: #fff;
+}
+
+.detail-body {
+  padding-bottom: calc(32px + var(--safe-bottom));
+}
+
+.detail-photo-wrapper {
+  width: 100%;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  background: var(--bg-deep);
+  position: relative;
+}
+
+.detail-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.detail-number-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: rgba(0,0,0,0.8);
+  color: var(--cyan);
+  font-size: 11px;
+  padding: 4px 10px;
+  border: 2px solid var(--cyan);
+  letter-spacing: 2px;
+}
+
+.detail-info {
+  padding: 16px;
+}
+
+.detail-name {
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  word-break: break-word;
+}
+
+.detail-divider {
+  width: 40px;
+  height: 3px;
+  background: var(--cyan);
+  margin: 12px 0;
+}
+
+.detail-desc {
+  font-size: 8px;
+  color: var(--text-dim);
+  line-height: 2;
+  margin-bottom: 16px;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.detail-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.detail-meta-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 7px;
+}
+
+.detail-meta-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+}
+
+.detail-meta-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.detail-meta-label {
+  color: var(--text-muted);
+  font-size: 6px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.detail-meta-value {
+  color: var(--text-dim);
+  line-height: 1.8;
+  word-break: break-word;
+}
+
+/* ══════════════════════════════════════
+   FAB (Floating Action Button)
+   ══════════════════════════════════════ */
+
+.fab {
+  position: fixed;
+  bottom: calc(20px + var(--safe-bottom));
+  right: 20px;
+  width: var(--fab-size);
+  height: var(--fab-size);
+  background: var(--cyan);
+  border: 4px solid #0ea5e9;
+  color: var(--bg-deep);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow:
+    4px 4px 0 rgba(0,0,0,0.4);
+  /* Pixel art corners */
+  clip-path: polygon(
+    0 4px, 4px 4px, 4px 0,
+    calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px,
+    100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px),
+    calc(100% - 4px) 100%, 4px 100%, 4px calc(100% - 4px),
+    0 calc(100% - 4px)
+  );
+}
+
+.fab:active {
+  transform: scale(0.9);
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.4);
+}
+
+.fab.hidden {
+  transform: scale(0) rotate(45deg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fab span {
+  margin-top: -2px;
+}
+
+/* ══════════════════════════════════════
+   TOAST
+   ══════════════════════════════════════ */
+
+.toast {
+  position: fixed;
+  bottom: calc(100px + var(--safe-bottom));
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--bg-card);
+  border: 2px solid var(--border-light);
+  color: var(--text);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  padding: 12px 20px;
+  z-index: 9999;
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  max-width: 85%;
+  text-align: center;
+  line-height: 1.8;
+  pointer-events: none;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* ══════════════════════════════════════
+   CONFIRM DIALOG
+   ══════════════════════════════════════ */
+
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 24px;
+}
+
+.confirm-box {
+  background: var(--bg-card);
+  border: 4px solid var(--border-light);
+  padding: 24px;
+  max-width: 320px;
+  width: 100%;
+  text-align: center;
+}
+
+.confirm-msg {
+  font-size: 9px;
+  line-height: 2;
+  margin-bottom: 20px;
+  color: var(--text);
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-confirm {
+  flex: 1;
+  padding: 10px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  cursor: pointer;
+  border: 3px solid;
+  transition: transform 0.1s;
+}
+
+.btn-confirm:active {
+  transform: scale(0.95);
+}
+
+.btn-confirm.cancel {
+  background: var(--bg-input);
+  border-color: var(--border);
+  color: var(--text-dim);
+}
+
+.btn-confirm.ok {
+  background: var(--danger-dark);
+  border-color: var(--danger);
+  color: #fff;
+}
+
+/* ══════════════════════════════════════
+   INSTALL BANNER
+   ══════════════════════════════════════ */
+
+.install-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  border-top: 3px solid var(--cyan);
+  padding: 14px 16px;
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 480px;
+  margin: 0 auto;
+  animation: slideUp 0.4s ease;
+}
+
+.install-banner p {
+  font-size: 8px;
+  color: var(--text);
+}
+
+.install-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-install-dismiss {
+  background: none;
+  border: 2px solid var(--border);
+  color: var(--text-dim);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.btn-install-accept {
+  background: var(--cyan);
+  border: 2px solid #0ea5e9;
+  color: var(--bg-deep);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+/* ══════════════════════════════════════
+   ANIMATIONS
+   ══════════════════════════════════════ */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.fish-card {
+  animation: fadeIn 0.3s ease backwards;
+}
+
+.fish-card:nth-child(1)  { animation-delay: 0.00s; }
+.fish-card:nth-child(2)  { animation-delay: 0.05s; }
+.fish-card:nth-child(3)  { animation-delay: 0.10s; }
+.fish-card:nth-child(4)  { animation-delay: 0.15s; }
+.fish-card:nth-child(5)  { animation-delay: 0.20s; }
+.fish-card:nth-child(6)  { animation-delay: 0.25s; }
+.fish-card:nth-child(7)  { animation-delay: 0.30s; }
+.fish-card:nth-child(8)  { animation-delay: 0.35s; }
+.fish-card:nth-child(9)  { animation-delay: 0.40s; }
+.fish-card:nth-child(10) { animation-delay: 0.45s; }
+
+/* ══════════════════════════════════════
+   PHOTO SOURCE PICKER (Bottom Sheet)
+   ══════════════════════════════════════ */
+
+.photo-picker {
+  position: fixed;
+  inset: 0;
+  z-index: 11000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.photo-picker-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  animation: fadeInBg 0.2s ease;
+}
+
+@keyframes fadeInBg {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.photo-picker-sheet {
+  position: relative;
+  background: var(--bg-card);
+  border-top: 4px solid var(--cyan);
+  width: 100%;
+  max-width: 480px;
+  padding: 20px 16px calc(20px + var(--safe-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: slideUp 0.3s ease;
+}
+
+.photo-picker-title {
+  font-size: 9px;
+  color: var(--text-dim);
+  text-align: center;
+  margin-bottom: 4px;
+  letter-spacing: 2px;
+}
+
+.photo-picker-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--bg-input);
+  border: 3px solid var(--border);
+  color: var(--text);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.photo-picker-btn:active {
+  border-color: var(--cyan);
+  background: var(--bg-card-hover);
+}
+
+.photo-picker-btn.cancel {
+  border-color: var(--danger-dark);
+  color: var(--danger);
+  margin-top: 4px;
+}
+
+.photo-picker-btn.cancel:active {
+  background: var(--danger-dark);
+  color: #fff;
+}
+
+/* ══════════════════════════════════════
+   AUTOCOMPLETE DROPDOWN
+   ══════════════════════════════════════ */
+
+.field-autocomplete {
+  position: relative;
+}
+
+.autocomplete-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  border: 3px solid var(--cyan);
+  border-top: none;
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.autocomplete-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+  transition: background-color 0.1s;
+}
+
+.autocomplete-item:last-child {
+  border-bottom: none;
+}
+
+.autocomplete-item:active {
+  background: var(--bg-card-hover);
+}
+
+.autocomplete-thumb {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  background: var(--bg-deep);
+  image-rendering: auto;
+}
+
+.autocomplete-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.autocomplete-name {
+  font-size: 8px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+.autocomplete-sci {
+  font-size: 7px;
+  color: var(--text-muted);
+  font-style: italic;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.autocomplete-loading {
+  padding: 12px;
+  text-align: center;
+  font-size: 7px;
+  color: var(--text-dim);
+}
+
+/* ══════════════════════════════════════
+   SETTINGS MODAL
+   ══════════════════════════════════════ */
+
+.settings-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.settings-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.settings-box {
+  position: relative;
+  background: var(--bg-card);
+  border: 4px solid var(--cyan);
+  width: 100%;
+  max-width: 400px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  animation: fadeIn 0.25s ease;
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--bg-deep);
+  border-bottom: 3px solid var(--border);
+}
+
+.settings-title {
+  font-size: 10px;
+  color: var(--cyan);
+  letter-spacing: 1px;
+}
+
+.btn-settings-close {
+  background: none;
+  border: 2px solid var(--border-light);
+  color: var(--text-dim);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.btn-settings-close:active {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.settings-body {
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-section-title {
+  font-size: 8px;
+  color: var(--text);
+  letter-spacing: 1px;
+}
+
+.settings-section-desc {
+  font-size: 7px;
+  color: var(--text-dim);
+  line-height: 1.8;
+}
+
+.settings-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+/* ── Pixel Radio ── */
+.pixel-radio-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--bg-input);
+  border: 2px solid var(--border);
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.pixel-radio-label:active {
+  background: var(--bg-card-hover);
+}
+
+.pixel-radio-label input[type="radio"] {
+  display: none;
+}
+
+.pixel-radio-custom {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--text-dim);
+  background: var(--bg-deep);
+  margin-top: 2px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pixel-radio-label input[type="radio"]:checked + .pixel-radio-custom {
+  border-color: var(--cyan);
+}
+
+.pixel-radio-label input[type="radio"]:checked + .pixel-radio-custom::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--cyan);
+}
+
+.pixel-radio-label:has(input[type="radio"]:checked) {
+  border-color: var(--cyan);
+  background: rgba(34, 211, 238, 0.05);
+}
+
+.pixel-radio-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pixel-radio-text strong {
+  font-size: 8px;
+  color: var(--text);
+}
+
+.pixel-radio-text small {
+  font-size: 6px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ── Settings Info Box ── */
+.settings-info-box {
+  background: var(--bg-input);
+  border: 2px solid var(--border);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 7px;
+  color: var(--text-dim);
+}
+
+.settings-info-row span:last-child {
+  color: var(--cyan);
+}
+
+.btn-save-settings {
+  margin: 0 16px 16px;
+  padding: 14px;
+  background: var(--green-dark);
+  border: 3px solid #0d6630;
+  color: #fff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: transform 0.1s;
+}
+
+.btn-save-settings:active {
+  transform: scale(0.97);
+}
+
+/* ── Stacked Confirm Buttons ── */
+.confirm-actions-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.confirm-actions-col .btn-confirm {
+  width: 100%;
+  padding: 12px;
+  font-size: 8px;
+}
+
+/* ══════════════════════════════════════
+   END OF STYLESHEET
+   ══════════════════════════════════════ */
